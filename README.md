@@ -22,8 +22,12 @@ Welcome to Movie Dekho, your one-stop destination for booking movie tickets onli
 - 📱 Fully Responsive User-friendly UI
 
 ## Sneak Peek 👀
-![Purchase1](https://github.com/user-attachments/assets/a4a0e8c2-ad20-4057-8d94-262c167c8a4c)
-![Purchase2](https://github.com/user-attachments/assets/6b6b4c21-9127-4b41-8760-199ad2499767)
+![{612E18AA-DC59-4A2D-8EE6-49AB5DFEB5C0}](https://github.com/user-attachments/assets/252db11f-e2de-4c1d-8325-acb27a5997fc)
+
+![Screenshot 2024-12-01 220306](https://github.com/user-attachments/assets/aadf1af6-ffb1-440d-a743-4e331bc79749)
+
+![{DE685B9E-3750-4101-97B0-D8E44187D1A5}](https://github.com/user-attachments/assets/1576f466-cb44-4cf5-82da-3ee469f2bbad)
+
 
 
 ## Tech Stack💻
