@@ -2,7 +2,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { showLoginModal } from "../../../reducers/authSlice";
 import { resetCart } from "../../../reducers/cartSlice";
-
 export const ShowtimesCard = (props) => {
   const dates3d = props["3D"] ? Object.keys(props["3D"]) : [];
   const dates2d = props["2D"] ? Object.keys(props["2D"]) : [];
@@ -23,9 +22,7 @@ export const ShowtimesCard = (props) => {
               className="showtimes-startime-btn"
               onClick={() => {
                 dispatch(resetCart());
-                isAuthenticated && signedPerson.person_type === "Customer"
-                  ? navigate("/purchase")
-                  : dispatch(showLoginModal());
+                navigate("/purchase"); // Skip authentication and go directly to purchase
               }}
             >
               {curStartTime}
@@ -61,9 +58,7 @@ export const ShowtimesCard = (props) => {
               className="showtimes-startime-btn"
               onClick={() => {
                 dispatch(resetCart());
-                isAuthenticated && signedPerson.person_type === "Customer"
-                  ? navigate("/purchase")
-                  : dispatch(showLoginModal());
+                navigate("/purchase"); // Skip authentication and go directly to purchase
               }}
             >
               {curStartTime}

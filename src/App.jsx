@@ -56,18 +56,10 @@ function App() {
           <Routes key={currentPage.pathname} location={currentPage}>
             <Route path="/" element={<HomePage />} />
             <Route path="/showtimes" element={<ShowtimesPage />} />
-            <Route
-              element={
-                <ProtectedRoute
-                  condition={
-                    isAuthenticated && signedPerson.person_type === "Customer"
-                  }
-                />
-              }
-            >
+           
               <Route path="/purchase" element={<PurchasePage />} />
               <Route path="/customer" element={<CustomerInfoPage />} />
-            </Route>
+            
 
             <Route
               element={
