@@ -1,36 +1,34 @@
-import { useEffect, useState } from "react";
-import axios from "axios";
 import { Feature } from "./Feature";
-import HashLoader from "react-spinners/HashLoader";
 
 export const Features = () => {
-  const [featuresData, setFeaturesData] = useState([]);
-  const override = {
-    display: "block",
-    margin: "2.4rem auto",
-  };
-  const [loading, setLoading] = useState(true);
+  // Static features data
+  const featuresData = [
+      {
+        title: "Unparalleled Cinematic Experience",
+        description: "Immerse yourself in a world of unparalleled visuals.",
+        image_path: "/Images/features/imax.webp",
+      },
+      {
+        title: "Delight in Dolby Atmos",
+        description: "Experience sound like never before.",
+        image_path: "/Images/features/sound.webp",
+      },
+      {
+        title: "Tantalizing Treats",
+        description: "Enjoy delicious snacks while watching your favorite movies.",
+        image_path: "/Images/features/food.webp",
+      },
+      {
+        title: "Luxurious Escape",
+        description: "Relax in our comfortable lounge seating.",
+        image_path: "/Images/features/lounge.webp",
+      },
+  ];
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get(
-          `http://localhost:7002/locationFeatures`
-        );
-        setFeaturesData(response.data);
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, []);
-
-  const featuresHtml = featuresData.map((feature, idx) => {
-    return <Feature key={idx} {...feature} idx={idx} />;
-  });
+  // Generate feature components
+  const featuresHtml = featuresData.map((feature, idx) => (
+    <Feature key={idx} {...feature} idx={idx} />
+  ));
 
   return (
     <section className="section-features container">
@@ -38,12 +36,7 @@ export const Features = () => {
       <h2 className="section-features-heading heading-secondary">
         Unleash the Movie Magic and Discover Our Spectacular Features
       </h2>
-
-      {loading ? (
-        <HashLoader cssOverride={override} color="#eb3656" />
-      ) : (
-        <div className="feature-contents">{featuresHtml}</div>
-      )}
+      <div className="feature-contents">{featuresHtml}</div>
     </section>
   );
 };

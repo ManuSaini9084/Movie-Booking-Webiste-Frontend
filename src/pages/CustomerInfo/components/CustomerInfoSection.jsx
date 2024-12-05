@@ -1,4 +1,3 @@
-import axios from "axios";
 import { useEffect, useState } from "react";
 import {
   HiCalendar,
@@ -9,96 +8,67 @@ import {
   HiOutlineTv,
 } from "react-icons/hi2";
 import { RiSofaLine } from "react-icons/ri";
-import { useSelector } from "react-redux";
-import { Link } from "react-router-dom";
 import HashLoader from "react-spinners/HashLoader";
 
 export const CustomerInfoSection = () => {
+  // Static data for customer info
   const [cusProData, setCusProData] = useState({});
+  // Static data for purchase history
   const [cusTicketData, setCusTicketData] = useState([]);
   const override = {
     display: "block",
     margin: "2.4rem auto",
   };
 
-  const { signedPerson } = useSelector((store) => store.authentication);
-
-  const [loading1, setLoading1] = useState(true);
-  const [loading2, setLoading2] = useState(true);
+  // Loading states
+  const [loading1, setLoading1] = useState(false); // No need to load customer info from API
+  const [loading2, setLoading2] = useState(false); // No need to load purchase history from API
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.post(
-          `http://localhost:7002/customerProfile`,
-          {
-            email: signedPerson.email,
-            password: signedPerson.password,
-          }
-        );
-        setCusProData(response.data[0]);
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setLoading1(false);
-      }
+    // Fetch customer info from localStorage (simulating a static response)
+    const customerData = JSON.parse(localStorage.getItem("customerInfo"));
+    if (customerData) {
+      setCusProData(customerData);
+    }
 
-      try {
-        console.log("enter block");
-      
-        // Ensure signedPerson.email exists before sending the request
-        if (!signedPerson || !signedPerson.email) {
-          throw new Error("Email is not available");
-        }
-      
-        // Make the request
-        const response = await axios.post(
-          
-          `http://localhost:7002/customerPurchases`,
-          { email: signedPerson.email },
-          // console.log(signedPerson.email),
-        );
-      console.log("mey data",response)
-        // Check if response.data is an array before attempting to map
-        if (Array.isArray(response.data)) {
-          console.log("xyz", response.data);
-      
-          // Map through the response data to format dates
-          const formattedData = response.data.map((dataObj) => {
-            // Format purchase_date and showtime_date
-            const purDate = new Date(dataObj.purchase_date).toLocaleDateString("en-GB");
-            const showDate = new Date(dataObj.showtime_date).toLocaleDateString("en-GB");
-      
-            return {
-              ...dataObj,
-              showtime_date: showDate,
-              purchase_date: purDate,
-            };
-          });
-      
-          // Set the formatted data to the state
-          setCusTicketData(formattedData);
-        } else {
-          throw new Error("Expected an array response from the server");
-        }
-      } catch (err) {
-        console.error("Error occurred:", err);
-      } finally {
-        setLoading2(false);
-      }
-      
-    };
+    // Static data for purchase history
+    const purchaseHistory = [
+      {
+        movie_name: "Extraction 2",
+        ticket_ids: "12345",
+        theatre_name: "Cineplex",
+        hall_name: "Hall 1",
+        seat_numbers: "A1, A2",
+        showtime_date: "2024-12-01",
+        movie_start_time: "18:00",
+        ticket_price: "500 BDT",
+        purchase_date: "2024-11-30",
+        movie_image: "/Images/movies/extraction2.webp",
+        show_type: "2D",
+        movie_id: "movie-123",
+      },
+      {
+        movie_name: "Murder Mystery",
+        ticket_ids: "67890",
+        theatre_name: "Galaxy Cinema",
+        hall_name: "Hall 2",
+        seat_numbers: "B1, B2",
+        showtime_date: "2024-12-05",
+        movie_start_time: "20:00",
+        ticket_price: "600 BDT",
+        purchase_date: "2024-12-01",
+        movie_image: "/Images/movies/murderMystery.webp",
+        show_type: "3D",
+        movie_id: "movie-456",
+      },
+    ];
+    setCusTicketData(purchaseHistory);
+  }, []);
 
-    fetchData();
-  }, [signedPerson]);
-
+  // HTML for displaying purchase history
   const purchaseHtml = cusTicketData.map((cusTicket, id) => {
     return (
-      <Link
-        key={id}
-        to={`/movieDetails/${cusTicket.movie_id}`}
-        className="purchase-history-item"
-      >
+      <div key={id} className="purchase-history-item">
         <div className="purchase-first-gap"></div>
         <div className="purchase-second-gap"></div>
 
@@ -153,51 +123,21 @@ export const CustomerInfoSection = () => {
           </div>
         </div>
 
-        <div
-          to={`/movieDetails/${cusTicket.movie_id}`}
-          className="purchase-item-img-box"
-        >
+        <div className="purchase-item-img-box">
           <img
             className="purchase-item-img"
             src={cusTicket.movie_image}
             alt="movie-photo"
           />
         </div>
-      </Link>
+      </div>
     );
   });
 
   return (
     <div className="section-customer-info">
       <div className="container">
-        <h3 className="customer-info-heading">Customer Info</h3>
-        {loading1 ? (
-          <HashLoader cssOverride={override} color="#eb3656" />
-        ) : (
-          <div className="customer-info-details">
-            <div>
-              <p>Name</p>
-              <p>:</p>
-              <p>
-                {cusProData &&
-                  `${cusProData.first_name} ${cusProData.last_name}`}
-              </p>
-            </div>
-
-            <div>
-              <p>Email Address</p>
-              <p>:</p>
-              <p>{cusProData.email}</p>
-            </div>
-
-            <div>
-              <p>Phone No.</p>
-              <p>:</p>
-              <p>{cusProData.phone_number}</p>
-            </div>
-          </div>
-        )}
-
+       
         <h3 className="customer-info-heading">Purchase History</h3>
         {loading2 ? (
           <HashLoader cssOverride={override} color="#eb3656" />

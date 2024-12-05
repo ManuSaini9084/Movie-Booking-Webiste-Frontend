@@ -16,10 +16,22 @@ export const GenreSelector = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(
-          `http://localhost:7002/genres`
-        );
-        setGenreData([{ genre: "All" }, ...response.data]);
+        // Static genres for now
+        const staticGenres = [
+          { genre: "Animation" },
+          { genre: "Action" },
+          { genre: "Adventure" },
+          { genre: "Thriller" },
+          { genre: "Mystery" },
+          { genre: "Comedy" },
+          { genre: "Drama" },
+          { genre: "Fantasy" },
+          { genre: "Sci-Fi" },
+          { genre: "Horror" },
+          { genre: "Biography" },
+          { genre: "History" },
+        ];
+        setGenreData([{ genre: "All" }, ...staticGenres]);
         setLoading(false);
       } catch (err) {
         console.log(err);
@@ -52,7 +64,6 @@ export const GenreSelector = () => {
           }}
           checked={genre === userGenre}
         />
-
         <label className="form-genre-detail" htmlFor={idx}>
           {genre}
         </label>

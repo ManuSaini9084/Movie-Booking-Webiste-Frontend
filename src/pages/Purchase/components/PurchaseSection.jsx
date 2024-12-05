@@ -11,6 +11,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { purchaseCompletion, ticketPurchaseError } from "../../../toasts/toast";
 import { resetCart } from "../../../reducers/cartSlice";
 import { useNavigate } from "react-router-dom";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css"; // Import the styles
+
 
 const currentDate = () => {
   const date = new Date();
@@ -69,55 +72,57 @@ export const PurchaseSection = () => {
     seatsData.filter((seatData) => userSeatList.includes(seatData.seat_id));
 
   const handleTicketPurchase = async () => {
-    try {
-      setBtnDisabled(true);
-      setLoading(true);
-      let paymentID;
+    toast.success("Purchase successful!"); 
+    navigate('/customer');
+    // try {
+    //   setBtnDisabled(true);
+    //   setLoading(true);
+    //   let paymentID;
 
-      // Make the payment request
-      const paymentResponse = await axios.post(
-        `http://localhost:7002/payment`,
-        {
-          amount: userSeatPrice * userSeats.length,
-          userPayMethod,
-          email: signedPerson.email,
-        }
-      );
+    //   // Make the payment request
+    //   const paymentResponse = await axios.post(
+    //     `http://localhost:7002/payment`,
+    //     {
+    //       amount: userSeatPrice * userSeats.length,
+    //       userPayMethod,
+    //       email: signedPerson.email,
+    //     }
+    //   );
 
-      paymentID = paymentResponse.data && paymentResponse.data[0].last_id;
+    //   paymentID = paymentResponse.data && paymentResponse.data[0].last_id;
 
-      // Purchase tickets for each seat
-      for (const seatId of userSeatList) {
-        await axios.post(`http://localhost:7002/purchaseTicket`, {
-          price: userSeatPrice,
-          purchase_date: currentDate(),
-          paymentID,
-          seatId,
-          userHallId,
-          userMovieId,
-          userShowtimeId,
-        });
-      }
+    //   // Purchase tickets for each seat
+    //   for (const seatId of userSeatList) {
+    //     await axios.post(`http://localhost:7002/purchaseTicket`, {
+    //       price: userSeatPrice,
+    //       purchase_date: currentDate(),
+    //       paymentID,
+    //       seatId,
+    //       userHallId,
+    //       userMovieId,
+    //       userShowtimeId,
+    //     });
+    //   }
 
-      // Get recent purchase data
-      const recentPurchaseResponse = await axios.post(
-        `http://localhost:7002/recentPurchase`,
-        {
-          paymentID,
-        }
-      );
+    //   // Get recent purchase data
+    //   const recentPurchaseResponse = await axios.post(
+    //     `http://localhost:7002/recentPurchase`,
+    //     {
+    //       paymentID,
+    //     }
+    //   );
 
-      console.log("syvfyvf",recentPurchaseResponse.data)
-      setTicketIds(recentPurchaseResponse.data);
+    //   console.log("syvfyvf",recentPurchaseResponse.data)
+    //   setTicketIds(recentPurchaseResponse.data);
 
-      // Clear user selection
-      dispatch(resetCart());
-    } catch (err) {
-      console.error(err);
-      ticketPurchaseError();
-    } finally {
-      setLoading(false);
-    }
+    //   // Clear user selection
+    //   dispatch(resetCart());
+    // } catch (err) {
+    //   console.error(err);
+    //   ticketPurchaseError();
+    // } finally {
+    //   setLoading(false);
+    // }
   };
 
   useEffect(() => {

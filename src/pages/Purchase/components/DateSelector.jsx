@@ -1,39 +1,22 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
 import HashLoader from "react-spinners/HashLoader";
 import { useDispatch, useSelector } from "react-redux";
 import { resetCart, setShowDate } from "../../../reducers/cartSlice";
 
 export const DateSelector = ({ paymentOngoing }) => {
-  const [showDatesData, setShowDatesData] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const { id: theatreId } = useSelector((store) => store.currentLocation);
+  const [loading, setLoading] = useState(false); // Static data, no loading needed
   const { showtime_date: userDate } = useSelector((store) => store.cart);
 
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    console.log(showDatesData);
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        const response = await axios.post(
-          `http://localhost:7002/showtimesDates`,
-          { theatreId }
-        );
-        console.log(response); // Log the response data to check the unique dates
-        setShowDatesData(response.data);
-        dispatch(resetCart());
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
-  
-    if (theatreId !== "") fetchData();
-  }, [theatreId, dispatch]);
-  
+  // Static dates data directly in frontend
+  const staticDates = [
+    { showtime_date: "2023-12-05" },
+    { showtime_date: "2023-12-06" },
+    { showtime_date: "2023-12-07" },
+    { showtime_date: "2023-12-08" },
+    { showtime_date: "2023-12-09" },
+  ];
 
   const checkedColor = (val) => {
     return {
@@ -42,44 +25,43 @@ export const DateSelector = ({ paymentOngoing }) => {
     };
   };
 
-  const dateOptions = Array.isArray(showDatesData)
-  ? showDatesData.map((dateData, idx) => {
-      const dateObj = new Date(dateData.showtime_date);
+  const dateOptions = Array.isArray(staticDates)
+    ? staticDates.map((dateData, idx) => {
+        const dateObj = new Date(dateData.showtime_date);
 
-      const day = dateObj.toLocaleString("en-us", { weekday: "short" });
-      const month = dateObj.toLocaleString("en-us", { month: "short" });
-      const date = dateObj.toLocaleString("en-us", { day: "numeric" });
-      const year = dateObj.toLocaleString("en-us", { year: "numeric" });
-      const monthNumber = dateObj.toLocaleString("en-us", { month: "numeric" });
-      const formattedDate = `${year}-${monthNumber}-${date}`;
+        const day = dateObj.toLocaleString("en-us", { weekday: "short" });
+        const month = dateObj.toLocaleString("en-us", { month: "short" });
+        const date = dateObj.toLocaleString("en-us", { day: "numeric" });
+        const year = dateObj.toLocaleString("en-us", { year: "numeric" });
+        const monthNumber = dateObj.toLocaleString("en-us", { month: "numeric" });
+        const formattedDate = `${year}-${monthNumber}-${date}`;
 
-      return (
-        <div
-          className="date-input-container"
-          key={idx}
-          style={checkedColor(formattedDate)}
-        >
-          <input
-            disabled={loading || paymentOngoing}
-            type="radio"
-            id={`date-${idx}`}
-            name="Select Date"
-            value={formattedDate}
-            onChange={(e) => dispatch(setShowDate(e.target.value))}
-            checked={formattedDate === userDate}
-          />
-          <label className="form-date-detail" htmlFor={`date-${idx}`}>
-            <p className="form-day">{day}</p>
-            <div className="form-date-month">
-              <p className="form-date">{date}</p>
-              <p className="form-month">{month}</p>
-            </div>
-          </label>
-        </div>
-      );
-    })
-  : <p>No dates available</p>; // Fallback when showDatesData is not an array or empty.
-
+        return (
+          <div
+            className="date-input-container"
+            key={idx}
+            style={checkedColor(formattedDate)}
+          >
+            <input
+              disabled={paymentOngoing}
+              type="radio"
+              id={`date-${idx}`}
+              name="Select Date"
+              value={formattedDate}
+              onChange={(e) => dispatch(setShowDate(e.target.value))}
+              checked={formattedDate === userDate}
+            />
+            <label className="form-date-detail" htmlFor={`date-${idx}`}>
+              <p className="form-day">{day}</p>
+              <div className="form-date-month">
+                <p className="form-date">{date}</p>
+                <p className="form-month">{month}</p>
+              </div>
+            </label>
+          </div>
+        );
+      })
+    : <p>No dates available</p>;
 
   return (
     <div>

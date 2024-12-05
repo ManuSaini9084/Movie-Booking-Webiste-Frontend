@@ -1,14 +1,9 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
-import HashLoader from "react-spinners/HashLoader";
 import { useDispatch, useSelector } from "react-redux";
 import { setShowDetail } from "../../../reducers/cartSlice";
+import HashLoader from "react-spinners/HashLoader";
 
-export const PictureQualitySelector = ({
-  hallData,
-  setHallData,
-  paymentOngoing,
-}) => {
+export const PictureQualitySelector = ({ hallData, setHallData, paymentOngoing }) => {
   const override = {
     display: "block",
     margin: "1.6rem auto",
@@ -30,26 +25,30 @@ export const PictureQualitySelector = ({
   let userAns = `${userShowtimeId},${userHallId},${userSeatPrice}`;
 
   useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      try {
-        const response = await axios.post(
-          `http://localhost:7002/halls`,
-          {
-            theatreId,
-            userDate,
-            userMovieId,
-          }
-        );
-        setHallData(response.data);
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
+    setLoading(true);
+    // Static Data to simulate fetched hall data
+    const staticHallData = [
+      {
+        hall_id: 1,
+        hall_name: 'Hall 1',
+        movie_start_time: ['10:00 AM', '2:00 PM', '6:00 PM'],
+        showtime_id: [1, 2, 3],
+        price_per_seat: 300,
+        show_type: 'Standard'
+      },
+      {
+        hall_id: 2,
+        hall_name: 'Hall 2',
+        movie_start_time: ['11:00 AM', '3:00 PM', '7:00 PM'],
+        showtime_id: [4, 5, 6],
+        price_per_seat: 400,
+        show_type: 'VIP'
+      },
+      // Add more halls as needed...
+    ];
 
-    fetchData();
+    setHallData(staticHallData);
+    setLoading(false);
   }, [userMovieId, theatreId, userDate, setHallData]);
 
   const checkedColor = (val) => {
@@ -59,43 +58,11 @@ export const PictureQualitySelector = ({
     };
   };
 
-  hallData.forEach((hall) => {
-    const isPresent = newHallData.some(
-      (hallData) =>
-        hallData.show_type === hall.show_type &&
-        hall.hall_id === hallData.hall_id
-    );
-
-    if (isPresent) {
-      const curMovie = newHallData.find(
-        (hallData) =>
-          hallData.show_type === hall.show_type &&
-          hall.hall_id === hallData.hall_id
-      );
-
-      curMovie.movie_start_time.push(hall.movie_start_time);
-      curMovie.showtime_id.push(hall.showtime_id);
-    } else {
-      newHallData.push({
-        hall_id: hall.hall_id,
-        hall_name: hall.hall_name,
-        movie_start_time: [hall.movie_start_time],
-        showtime_id: [hall.showtime_id],
-        price_per_seat: hall.price_per_seat,
-        show_type: hall.show_type,
-      });
-    }
-  });
-
-  const showtimeOptions = newHallData.map((show) => {
+  const showtimeOptions = hallData.map((show) => {
     const options = show.movie_start_time.map((option, idx) => {
       const valStr = `${show.showtime_id[idx]},${show.hall_id},${show.price_per_seat}`;
       return (
-        <div
-          className="time-input-container"
-          key={idx}
-          style={checkedColor(valStr)}
-        >
+        <div className="time-input-container" key={idx} style={checkedColor(valStr)}>
           <input
             disabled={loading || paymentOngoing}
             type="radio"
@@ -105,7 +72,6 @@ export const PictureQualitySelector = ({
             onChange={(e) => dispatch(setShowDetail(e.target.value))}
             checked={userAns === valStr}
           />
-
           <label className="form-time-detail" htmlFor={show.showtime_id[idx]}>
             {option}
           </label>
@@ -114,15 +80,12 @@ export const PictureQualitySelector = ({
     });
 
     return (
-      <div
-        className="form-options-hall"
-        key={`${show.hall_name} (${show.show_type})`}
-      >
+      <div className="form-options-hall" key={`${show.hall_name} (${show.show_type})`}>
         <div className="form-picture-quality">
           {`${show.hall_name} (${show.show_type})`}
           <div className="form-showtimes">{options}</div>
         </div>
-        <p className="form-show-price">{`BDT ${show.price_per_seat}TK`}</p>
+        <p className="form-show-price">{`BDT ${show.price_per_seat} TK`}</p>
       </div>
     );
   });
@@ -132,9 +95,7 @@ export const PictureQualitySelector = ({
       <form>
         <div className="form-item-heading">Select Quality</div>
         {loading && <HashLoader cssOverride={override} color="#eb3656" />}
-        {!loading && (
-          <div className="form-hall-container">{showtimeOptions}</div>
-        )}
+        {!loading && <div className="form-hall-container">{showtimeOptions}</div>}
       </form>
     </div>
   );

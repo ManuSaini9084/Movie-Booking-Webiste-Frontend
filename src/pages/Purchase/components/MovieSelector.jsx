@@ -1,10 +1,9 @@
-import { useEffect, useState } from "react";
-import axios from "axios";
+import { useState } from "react";
 import HashLoader from "react-spinners/HashLoader";
 import { useDispatch, useSelector } from "react-redux";
 import { setMovie } from "../../../reducers/cartSlice";
 
-export const MovieSelector = ({ movieData, setMovieData, paymentOngoing }) => {
+export const MovieSelector = ({ paymentOngoing }) => {
   const override = {
     display: "block",
     margin: "1.6rem auto",
@@ -12,38 +11,44 @@ export const MovieSelector = ({ movieData, setMovieData, paymentOngoing }) => {
 
   const [loading, setLoading] = useState(false);
 
-  const { showtime_date: userDate, movie_id: userMovieId } = useSelector(
-    (store) => store.cart
-  );
-  const { id: theatreId } = useSelector((store) => store.currentLocation);
+  const { movie_id: userMovieId } = useSelector((store) => store.cart);
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    const fetchData = async () => {
-      if (userDate === "") return;
+  // Static movie data with correct image paths
+  const staticMovies = [
+    {
+      id: "1",
+      movie_name: "Spider-Man: Across the Spider-Verse",
+      image_path: "/Images/movies/spiderman.webp",
+    },
+    {
+      id: "2",
+      movie_name: "Extraction 2",
+      image_path: "/Images/movies/extraction2.webp",
+    },
+    {
+      id: "3",
+      movie_name: "Murder Mystery 2",
+      image_path: "/Images/movies/murderMystery.webp",
+    },
+    {
+      id: "4",
+      movie_name: "Mission: Impossible – Dead Reckoning Part One",
+      image_path: "/Images/movies/missionImpossible.webp",
+    },
+    {
+      id: "5",
+      movie_name: "Oppenheimer",
+      image_path: "/Images/movies/oppenheimer.webp",
+    },
+    {
+      id: "6",
+      movie_name: "Barbie",
+      image_path: "/Images/movies/barbie.webp",  // Replace with actual path if needed
+    },
+  ];
 
-      setLoading(true);
-      try {
-        const response = await axios.post(
-          `http://localhost:7002/uniqueMovies`,
-          {
-            theatreId,
-            userDate,
-          }
-        );
-
-        setMovieData(response.data);
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, [userDate, theatreId, setMovieData]);
-
-  const movieOptions = movieData.map((movie, idx) => {
+  const movieOptions = staticMovies.map((movie, idx) => {
     return (
       <div className="movie-input-container" key={idx}>
         <input

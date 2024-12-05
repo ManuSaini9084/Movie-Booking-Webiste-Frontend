@@ -1,8 +1,7 @@
-import { useEffect, useState } from "react";
-import axios from "axios";
-import HashLoader from "react-spinners/HashLoader";
+import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setSeat } from "../../../reducers/cartSlice";
+import HashLoader from "react-spinners/HashLoader";
 
 export const SeatSelector = ({ seatsData, setSeatsData, paymentOngoing }) => {
   const override = {
@@ -22,54 +21,45 @@ export const SeatSelector = ({ seatsData, setSeatsData, paymentOngoing }) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      try {
-        const response = await axios.post(
-          `http://localhost:7002/seats`,
-          {
-            userShowtimeId,
-            userHallId,
-            userMovieId,
-          }
-        );
-        setSeatsData(response.data);
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
+    setLoading(true);
+    // Static Data to simulate fetched seat data
+    const staticSeatsData = [
+      { seat_id: 1, seat_name: 'A1', booked_status: 0 },
+      { seat_id: 2, seat_name: 'A2', booked_status: 0 },
+      { seat_id: 3, seat_name: 'A3', booked_status: 1 },
+      { seat_id: 4, seat_name: 'A4', booked_status: 0 },
+      { seat_id: 5, seat_name: 'A5', booked_status: 0 },
+      { seat_id: 6, seat_name: 'A6', booked_status: 1 },
+      { seat_id: 7, seat_name: 'A7', booked_status: 0 },
+      { seat_id: 8, seat_name: 'A8', booked_status: 0 },
+      { seat_id: 9, seat_name: 'B1', booked_status: 0 },
+      { seat_id: 10, seat_name: 'B2', booked_status: 1 },
+      { seat_id: 11, seat_name: 'B3', booked_status: 0 },
+      { seat_id: 12, seat_name: 'B4', booked_status: 1 },
+      // Add more seats as needed...
+    ];
 
-    fetchData();
+    setSeatsData(staticSeatsData);
+    setLoading(false);
   }, [userHallId, userShowtimeId, userMovieId, setSeatsData]);
 
   let rows = [];
   let rowSeat = [];
 
-  // seatsData.forEach((seat) => {
-  //   return seat.selected && userSeat.push(seat.seat_id);
-  // });
-
   seatsData.forEach((seat, idx) => {
     let seatStatus;
-
     const handleTouchStart = (e) => {
       e.preventDefault();
       dispatch(setSeat(seat.seat_id));
     };
 
-    seat.booked_status === 0
-      ? (seatStatus = "booked")
-      : (seatStatus = "available");
+    seat.booked_status === 0 ? (seatStatus = "available") : (seatStatus = "booked");
 
     const seatHtml = (
       <div
         className={`seat ${seatStatus}`}
         disabled={loading || paymentOngoing}
-        onClick={() =>
-          seatStatus !== "booked" && dispatch(setSeat(seat.seat_id))
-        }
+        onClick={() => seatStatus !== "booked" && dispatch(setSeat(seat.seat_id))}
         onTouchEnd={seatStatus !== "booked" ? handleTouchStart : undefined}
         key={seat.seat_id}
         style={{
@@ -82,23 +72,13 @@ export const SeatSelector = ({ seatsData, setSeatsData, paymentOngoing }) => {
 
     if (idx === 0) {
       rowSeat.push(seatHtml);
-    } else if (
-      seatsData[idx].seat_name[0] !== seatsData[idx - 1].seat_name[0]
-    ) {
-      rows.push(
-        <div className="row" key={seatsData[idx - 1].seat_name[0]}>
-          {rowSeat}
-        </div>
-      );
+    } else if (seatsData[idx].seat_name[0] !== seatsData[idx - 1].seat_name[0]) {
+      rows.push(<div className="row" key={seatsData[idx - 1].seat_name[0]}>{rowSeat}</div>);
       rowSeat = [];
       rowSeat.push(seatHtml);
     } else if (idx === seatsData.length - 1) {
       rowSeat.push(seatHtml);
-      rows.push(
-        <div className="row" key={seatsData[idx - 1].seat_name[0]}>
-          {rowSeat}
-        </div>
-      );
+      rows.push(<div className="row" key={seatsData[idx - 1].seat_name[0]}>{rowSeat}</div>);
     } else {
       rowSeat.push(seatHtml);
     }

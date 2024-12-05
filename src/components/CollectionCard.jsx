@@ -18,13 +18,14 @@ export const CollectionCard = ({
   );
   const dispatch = useDispatch();
 
+  // Format release date
   const releaseDate = new Date(release_date).toLocaleDateString("en-GB");
   const ourRating = rating;
 
   return (
     <div
       className="home-movie-card"
-      onClick={() => navigate(`/movieDetails/${id}`)}
+      onClick={() => navigate(`/movieDetails/${id}`)} // Navigate to movie details on click
     >
       <div className="home-movie-img-box">
         <img
@@ -45,7 +46,7 @@ export const CollectionCard = ({
           >
             <path d="M394 480a16 16 0 01-9.39-3L256 383.76 127.39 477a16 16 0 01-24.55-18.08L153 310.35 23 221.2a16 16 0 019-29.2h160.38l48.4-148.95a16 16 0 0130.44 0l48.4 149H480a16 16 0 019.05 29.2L359 310.35l50.13 148.53A16 16 0 01394 480z" />
           </svg>
-          {/* <span>{ourRating.toFixed(1)}</span> */}
+          <span>{ourRating.toFixed(1)}</span> {/* Display the movie rating */}
         </div>
       </div>
 
@@ -94,7 +95,7 @@ export const CollectionCard = ({
               d="M464 160H48"
             />
           </svg>
-          <p className="category">{releaseDate}</p>
+          <p className="category">{releaseDate}</p> {/* Display the release date */}
         </div>
 
         <div className="line-3">
@@ -119,18 +120,21 @@ export const CollectionCard = ({
               d="M256 128v144h96"
             />
           </svg>
-          <p className="category-value">{duration}</p>
+          <p className="category-value">{duration}</p> {/* Display movie duration */}
         </div>
       </div>
 
       <button
         className="book-btn btn"
         onClick={(e) => {
-          e.stopPropagation();
-          dispatch(resetCart());
-          isAuthenticated && signedPerson.person_type === "Customer"
-            ? navigate("/purchase")
-            : dispatch(showLoginModal());
+          e.stopPropagation(); // Prevent event bubbling
+          dispatch(resetCart()); // Reset the cart
+          // Navigate to purchase page or show login modal based on authentication
+          if (isAuthenticated && signedPerson.person_type === "Customer") {
+            navigate("/purchase");
+          } else {
+            dispatch(showLoginModal());
+          }
         }}
       >
         Get ticket

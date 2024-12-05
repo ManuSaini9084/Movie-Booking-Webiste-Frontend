@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
 import { Link, useLocation } from "react-router-dom";
 import { HashLink } from "react-router-hash-link";
 import HashLoader from "react-spinners/HashLoader";
@@ -7,38 +6,25 @@ import { useDispatch } from "react-redux";
 import { showLoginModal, showSignModal } from "../reducers/authSlice";
 
 export const Footer = () => {
-  const [locationData, setLocationData] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
   let pageName;
   const location = useLocation();
 
   location.pathname === "/" ? (pageName = "home") : (pageName = "");
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get(
-          `http://localhost:7002/locationDetails`
-        );
-        setLocationData(response.data);
-      } catch (err) {
-        console.log(err);
-      } finally {
-        setLoading(false);
-      }
-    };
+  // Static locations to add
+  const locationData = [
+    "Lucknow Shopping Mall, Phoenix Palassio, Amar Shaheed Path, Sector 7, Gomti Nagar Extension, Lucknow, Uttar Pradesh 226010",
+    "Fun Republic Mall, Amar Shaheed Path, Gomti Nagar, Lucknow, Uttar Pradesh 226010",
+    "Sahara Ganj Mall, Hazratganj, Lucknow, Uttar Pradesh 226001",
+  ];
 
-    fetchData();
-  }, []);
-
-  const locations = locationData.map((location, idx) => {
-    return (
-      <p key={idx} className="address">
-        {location.location_details}
-      </p>
-    );
-  });
+  const locations = locationData.map((location, idx) => (
+    <p key={idx} className="address">
+      {location}
+    </p>
+  ));
 
   return (
     <section className="section-footer container">
